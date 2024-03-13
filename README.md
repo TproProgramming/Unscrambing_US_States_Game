@@ -49,11 +49,4 @@ This is a simple Python game built with Tkinter GUI library. In this game, playe
 - The game will provide feedback on whether your guess was correct or not.
 - You can exit the game at any time by clicking the "Exit" button.
 - You can restart the game at any time by clicking the "Restart" button.
-
-## Contributing
-
-Contributions are welcome! If you'd like to contribute to this project, feel free to submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- 
