@@ -1,4 +1,5 @@
 import random
+import tkinter as tk
 
 # List of US states
 us_states = [
@@ -14,54 +15,89 @@ us_states = [
     "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ]
 
-def scramble_word(word):
-    # Remove spaces from the word
-    word = word.replace(" ", "")
-    # Convert word to a list of characters
-    chars = list(word)
-    # Shuffle the list
-    random.shuffle(chars)
-    # Convert the list back to a string
-    return ''.join(chars)
+class USStateGame:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("US State Guessing Game")
+        self.root.geometry("400x300")  # Set the initial size of the window
+        self.used_states = set()
+        self.correct_guesses = 0
+        self.incorrect_guesses = 0
+        self.current_state = ""
+        self.scrambled_state = ""
+        
+        self.label = tk.Label(root, text="")
+        self.label.pack()
 
-def choose_random_state(used_states):
-    remaining_states = set(us_states) - used_states
-    if not remaining_states:
-        return None  # All states have been guessed
-    return random.choice(list(remaining_states))
+        self.entry = tk.Entry(root)
+        self.entry.pack()
+        self.entry.bind("<Return>", lambda event: self.check_guess())
+
+        self.submit_button = tk.Button(root, text="Submit", command=self.check_guess)
+        self.submit_button.pack()
+
+        self.guesses_label = tk.Label(root, text="")
+        self.guesses_label.pack()
+
+        self.new_game()
+
+    def new_game(self):
+        self.used_states.clear()
+        self.correct_guesses = 0
+        self.incorrect_guesses = 0
+        self.next_state()
+
+    def next_state(self):
+        self.current_state = self.choose_random_state()
+        if self.current_state is None:
+            self.label.config(text="Congratulations! You have guessed all 50 states.")
+            self.entry.config(state="disabled")
+            self.submit_button.config(state="disabled")
+        else:
+            self.scrambled_state = self.scramble_word(self.current_state.lower())
+            self.label.config(text=self.scrambled_state)
+            self.update_guesses_label()
+
+    def choose_random_state(self):
+        remaining_states = set(us_states) - self.used_states
+        if not remaining_states:
+            return None  # All states have been guessed
+        return random.choice(list(remaining_states))
+
+    def scramble_word(self, word):
+        # Remove spaces from the word
+        word = word.replace(" ", "")
+        # Convert word to a list of characters
+        chars = list(word)
+        # Shuffle the list
+        random.shuffle(chars)
+        # Convert the list back to a string
+        return ''.join(chars)
+
+    def check_guess(self):
+        guess = self.entry.get().strip().lower()
+        if guess == "exit":
+            self.root.destroy()
+        elif guess == self.current_state.lower():
+            self.correct_guesses += 1
+            self.label.config(text=f"Correct! The state is {self.current_state}")
+        else:
+            self.incorrect_guesses += 1
+            self.label.config(text=f"Incorrect. The correct answer is {self.current_state}")
+        self.label.after(2000, self.update_score)
+
+    def update_score(self):
+        self.label.config(text=f"Correct guesses: {self.correct_guesses}\nIncorrect guesses: {self.incorrect_guesses}")
+        self.entry.delete(0, tk.END)
+        self.next_state()
+
+    def update_guesses_label(self):
+        self.guesses_label.config(text=f"Correct guesses: {self.correct_guesses}\nIncorrect guesses: {self.incorrect_guesses}")
 
 def main():
-    used_states = set()
-    correct_guesses = 0
-    incorrect_guesses = 0
-    
-    while len(used_states) < len(us_states):
-        state = choose_random_state(used_states)
-        if state is None:
-            print("Congratulations! You have guessed all 50 states.")
-            break
-        
-        used_states.add(state)
-        scrambled_state = scramble_word(state.lower())
-        print("Guess the US state:")
-        print(scrambled_state)
-
-        guess = input("Your guess (type 'exit' to quit): ").strip().lower()
-
-        if guess == "exit":
-            print("Exiting the game. Thanks for playing!")
-            break
-        
-        if guess == state.lower():
-            print("Correct! The state is", state)
-            correct_guesses += 1
-        else:
-            print("Incorrect. The correct answer is", state)
-            incorrect_guesses += 1
-        
-        print("Correct guesses:", correct_guesses)
-        print("Incorrect guesses:", incorrect_guesses)
-        print()
+    root = tk.Tk()
+    game = USStateGame(root)
+    root.mainloop()
 
 if __name__ == "__main__":
     main()
