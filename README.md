@@ -34,10 +34,10 @@ This is a simple Python game built with Tkinter GUI library. In this game, playe
 
 ### Usage
 
-1. Run the Python script `us_state_game.py`:
+1. Run the Python script `UnscrmamblingStates.py`:
 
     ```bash
-    python us_state_game.py
+    python UnscramblingStates.py
     ```
 
 2. Follow the on-screen instructions to play the game.
